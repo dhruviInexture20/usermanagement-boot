@@ -24,9 +24,7 @@
 			<h1 class="text-center">User Registration</h1>
 			<div class="col-md-12 msg">
 				<div class="col-md-12 error-msg">
-				</div>
-				<div class="col-md-12 success-msg">
-					
+					<#if error_msg?? >${error_msg}</#if>
 				</div>
 			</div>
 			<form id="registration_form" 

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,6 +15,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 import com.google.gson.annotations.Expose;
 
@@ -25,33 +27,42 @@ import com.google.gson.annotations.Expose;
 @Table(name = "user")
 public class User implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Expose
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)	
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int userid;
 	
+	@NotBlank(message = "First name cannot be empty<br>")
 	@Expose
 	private String firstname;
+	
+	@NotBlank(message = "Last name cannot be empty<br>")
 	@Expose
 	private String lastname;
-	
+
+	@NotBlank(message = "Email cannot be empty<br>")
+	@Email(message = "Please enter a valid email<br>")
 	@Expose
-	@Column( unique = true)
 	private String email;
 	
+	@NotBlank(message = "Phone number cannot be empty<br>")
 	@Expose
 	private String phone;
+	
+
+	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Password must contain one capital letter,one numerical and one special character<br>")
 	@Expose
 	private String password;
+	
+	@NotBlank(message = "designation cannot be blank<br>")
 	@Expose
 	private String designation;
 	@Expose
 	private String birthdate;
+	
+	@NotBlank(message = "Gender cannot be blank<br>")
 	@Expose
 	private String gender;
 	
@@ -64,8 +75,11 @@ public class User implements Serializable {
 	@Lob
 	private String profilepic;
 	
+	@NotBlank(message = "Select a security question<br>")
 	@Expose
 	private String security_question;
+	
+	@NotBlank(message = "Please enter a security answer<br>")
 	@Expose
 	private String security_answer;
 	

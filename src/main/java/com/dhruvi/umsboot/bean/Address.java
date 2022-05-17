@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import com.google.gson.annotations.Expose;
 
@@ -15,10 +16,6 @@ import com.google.gson.annotations.Expose;
 @Table(name="userAddress")
 public class Address implements Serializable {
 
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Expose
@@ -26,14 +23,19 @@ public class Address implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int addressid;
 	
+	@NotBlank(message = "Street Address cannot be empty")
 	@Expose
 	private String street_address;
+	@NotBlank(message = "City cannot be empty")
 	@Expose
 	private String city;
+	@NotBlank(message = "Country cannot be empty")
 	@Expose
 	private String country;
+	@NotBlank(message = "State cannot be empty")
 	@Expose
 	private String state;
+	@NotBlank(message = "Postal code cannot be empty")
 	@Expose
 	private String postal_code;
 	

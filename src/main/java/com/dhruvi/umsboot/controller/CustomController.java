@@ -6,13 +6,16 @@ import java.util.List;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
-import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,50 +31,60 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-
-
 @Controller
 public class CustomController {
 
-	Logger logger = Logger.getLogger(CustomController.class);
+	private static final String EMAIL = "email";
+	private static final String PASSWORD = "password";
+	private static final String ADMINDASHBOARD = "adminDashboard";
+	private static final String PROFILE = "profile";
+	private static final String LOGIN = "login";
+	private static final String ROLE = "role";
+	private static final String ADMIN = "admin";
+	private static final String USER = "user";
+	private static final String REGISTRATION = "registration";
+	private static final String PROFILEPICTURE = "profilepicture";
+	private static final String USERID = "userid";
+	private static final String SUCCESS_MSG = "success_msg";
+	private static final String ERROR_MSG = "error_msg";
+
+	private static final Logger logger = LogManager.getLogger(CustomController.class);
 
 	@Autowired
 	private UserService service;
 
 	@RequestMapping(path = { "/", "/login" })
 	public String home() {
-		return "login";
+		return LOGIN;
 	}
 
 	@RequestMapping("/registration")
 	public String registration() {
-
-		return "registration";
-
+		return REGISTRATION;
 	}
 
 	@RequestMapping("/adminDashboard")
 	public String goToDashboard(HttpSession session) {
 
-		String role = (String) session.getAttribute("role");
+		String role = (String) session.getAttribute(ROLE);
 
-		if (role != null && role.equals("user")) {
-			return "profile";
+		if (role != null && role.equals(USER)) {
+			return PROFILE;
 		}
 
-		return "adminDashboard";
+		return ADMINDASHBOARD;
 	}
 
 	@RequestMapping("/profile")
 	public String goToProfile(HttpSession session) {
 
-		String role = (String) session.getAttribute("role");
+		String role = (String) session.getAttribute(ROLE);
 
-		if (role != null && role.equals("admin")) {
-			return "adminDashboard";
+		if (role != null && role.equals(ADMIN)) {
+			return ADMINDASHBOARD;
 		}
 
-		return "profile";
+		return PROFILE;
 	}
 
 	@RequestMapping("/forgetpassword")
@@ -85,28 +98,43 @@ public class CustomController {
 	}
 
 	@PostMapping(path = "/process_form", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-	public String register(@ModelAttribute User user, @RequestParam("profilepicture") MultipartFile filepart,
+	public String register(@Valid @ModelAttribute User user, BindingResult bindResult, @RequestParam(PROFILEPICTURE) MultipartFile filepart,
 			Model model) {
-
-		BasicConfigurator.configure();
-		int id = 0;
-		try {
-			String base64Image = Base64.getEncoder().encodeToString(filepart.getBytes());
-
-			user.setProfilepic(base64Image);
-			id = service.create(user);
-
-		} catch (Exception e) {
-			logger.error(e);
-		}
-
-		if (id > 0) {
-			model.addAttribute("success_msg", "User registered successfully");
+		
+		
+		StringBuilder error = new StringBuilder();
+		if (bindResult.hasErrors()) {
+			List<FieldError> errors = bindResult.getFieldErrors();
+			logger.info(errors);
+			for (FieldError err : errors) {
+				error.append(err.getDefaultMessage());
+				model.addAttribute(ERROR_MSG, error);
+				model.addAttribute(USER, user);
+			}
+			logger.info("builder = " + error);
+			return REGISTRATION;
 		} else {
-			model.addAttribute("error_msg", "Error while registering user");
 
+			int id = 0;
+			try {
+				String base64Image = Base64.getEncoder().encodeToString(filepart.getBytes());
+
+				user.setProfilepic(base64Image);
+				id = service.create(user);
+
+			} catch (Exception e) {
+				logger.error(e);
+			}
+
+			if (id > 0) {
+				model.addAttribute(SUCCESS_MSG, "User registered successfully");
+				logger.info("User registered");
+			} else {
+				model.addAttribute(ERROR_MSG, "Error while registering user");
+
+			}
 		}
-		return "login";
+		return LOGIN;
 
 	}
 
@@ -120,9 +148,8 @@ public class CustomController {
 	}
 
 	@RequestMapping("/process_login")
-	public String checkLogin(@RequestParam("email") String email, @RequestParam("password") String password,
+	public String checkLogin(@RequestParam(EMAIL) String email, @RequestParam(PASSWORD) String password,
 			HttpServletRequest request, Model model) {
-		BasicConfigurator.configure();
 		User user = null;
 		try {
 			user = service.getUser(email, password);
@@ -132,21 +159,21 @@ public class CustomController {
 
 		if (user == null) {
 
-			model.addAttribute("error_msg", "Wrong Email or Password");
-			model.addAttribute("email", email);
-			return "login";
+			model.addAttribute(ERROR_MSG, "Wrong Email or Password");
+			model.addAttribute(EMAIL, email);
+			return LOGIN;
 
-		} else if (user.getRole().equals("user")) {
+		} else if (user.getRole().equals(USER)) {
 			logger.info("user login");
 			HttpSession session = request.getSession();
-			session.setAttribute("role", "user");
-			session.setAttribute("user", user);
+			session.setAttribute(ROLE, USER);
+			session.setAttribute(USER, user);
 
 			return "redirect:profile";
 		} else {
 			logger.info("admin login");
 			HttpSession session = request.getSession();
-			session.setAttribute("role", "admin");
+			session.setAttribute(ROLE, ADMIN);
 
 			return "redirect:adminDashboard";
 		}
@@ -155,11 +182,10 @@ public class CustomController {
 	@ResponseBody
 	@RequestMapping(path = "/getAllUsers", produces = "application/json")
 	public JsonObject getAllUsers() {
-		BasicConfigurator.configure();
 		List<User> users = service.getUserList();
-		
+
 		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-		
+
 		JsonObject json = new JsonObject();
 		json.add("data", gson.toJsonTree(users));
 		logger.info(json);
@@ -169,17 +195,17 @@ public class CustomController {
 
 	@ResponseBody
 	@RequestMapping(path = "/deleteUserController")
-	public String deleteuser(@RequestParam("userid") int userid) {
+	public String deleteuser(@RequestParam(USERID) int userid) {
 
 		service.deleteUser(userid);
-
+		logger.info("user deleted");
 		return "true";
 	}
 
 	@PostMapping(path = "/editUserController")
-	public String editUser(@RequestParam("userid") String userid, HttpSession session) {
+	public String editUser(@RequestParam(USERID) String userid, HttpSession session) {
 
-		session.setAttribute("userid", userid);
+		session.setAttribute(USERID, userid);
 
 		User user = null;
 		try {
@@ -188,21 +214,22 @@ public class CustomController {
 			logger.error(e);
 		}
 
-		session.setAttribute("user", user);
+		session.setAttribute(USER, user);
 
-		return "registration";
+		return REGISTRATION;
 	}
 
 	@RequestMapping("/logOutController")
 	public String logout(HttpSession session) {
 
+		logger.info("user logout");
 		session.invalidate();
 		return "redirect:login";
 	}
 
 	@ResponseBody
 	@PostMapping(path = "/getUserAddress", produces = "application/json")
-	public JsonElement getUserAddress(@RequestParam("userid") String userid) {
+	public JsonElement getUserAddress(@RequestParam(USERID) String userid) {
 
 		List<Address> address = null;
 		try {
@@ -217,8 +244,8 @@ public class CustomController {
 
 	@PostMapping(path = "/process_edits", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
 	public String editUserData(@ModelAttribute User editedUser, HttpSession session,
-			@RequestParam("profilepicture") MultipartFile filepart) {
-		User user = (User) session.getAttribute("user");
+			@RequestParam(PROFILEPICTURE) MultipartFile filepart) {
+		User user = (User) session.getAttribute(USER);
 
 		editedUser.setEmail(user.getEmail());
 
@@ -246,27 +273,25 @@ public class CustomController {
 			logger.error(e);
 		}
 
-		String role = (String) session.getAttribute("role");
-
-		if (role.equals("admin")) {
+		String role = (String) session.getAttribute(ROLE);
+		logger.info("user edited successfully");
+		if (role.equals(ADMIN)) {
 			return "redirect:adminDashboard";
 		} else {
-			session.setAttribute("user", editedUser);
+			session.setAttribute(USER, editedUser);
 			return "redirect:profile";
 		}
-
 	}
 
 	@PostMapping("/forgetPasswordController")
-	public String processForgetPassword(@RequestParam("email") String email,
+	public String processForgetPassword(@RequestParam(EMAIL) String email,
 			@RequestParam("security_question") String s_que, @RequestParam("security_answer") String s_ans,
 			Model model) {
 
-		BasicConfigurator.configure();
 		String msg = service.authenticateUserForForgetPass(email, s_que, s_ans);
 
 		if (msg == null) {
-			model.addAttribute("email", email);
+			model.addAttribute(EMAIL, email);
 			String otp = null;
 			try {
 				otp = service.sendOTPMail(email);
@@ -278,30 +303,31 @@ public class CustomController {
 
 			return "fillOtp";
 		} else {
-			model.addAttribute("error_msg", msg);
+			model.addAttribute(ERROR_MSG, msg);
 			return "forgetpassword";
 		}
 	}
 
 	@PostMapping("/verifyOTPController")
-	public String checkOtp(@RequestParam("email") String email, @RequestParam("otp") String otp, Model model) {
+	public String checkOtp(@RequestParam(EMAIL) String email, @RequestParam("otp") String otp, Model model) {
 
 		// verify otp
 
-		model.addAttribute("email", email);
+		model.addAttribute(EMAIL, email);
 		boolean isCorrect = service.verifyOtp(email, otp);
 
 		if (isCorrect) {
 			return "resetpassword";
 
 		} else {
-			model.addAttribute("error_msg", "You have entered Wrong OTP");
+			model.addAttribute(ERROR_MSG, "You have entered Wrong OTP");
+			logger.info("Entered wrong otp");
 			return "fillOtp";
 		}
 	}
 
 	@PostMapping("/updatePasswordController")
-	public String updatePassword(@RequestParam("password") String password, @RequestParam("email") String email,
+	public String updatePassword(@RequestParam(PASSWORD) String password, @RequestParam(EMAIL) String email,
 			Model model) {
 
 		try {
@@ -310,9 +336,9 @@ public class CustomController {
 			logger.error(e);
 		}
 
-		model.addAttribute("success_msg", "Password changed successfully");
-
-		return "login";
+		model.addAttribute(SUCCESS_MSG, "Password changed successfully");
+		logger.info("Password changed sucessfully");
+		return LOGIN;
 
 	}
 }

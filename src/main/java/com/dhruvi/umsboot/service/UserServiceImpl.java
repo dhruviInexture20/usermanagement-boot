@@ -47,11 +47,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUser(String email, String password) throws Exception {
-
+		User user = null;
 		PasswordSecurity ps = new PasswordSecurity();
 		String pass = ps.encrypt(password); // encrypt
 		List<User> users = dao.findByEmailAndPassword(email, pass);
-		User user = users.get(0);
+		if(users.size() > 0) {
+			user = users.get(0);
+			
+		}
 		if(user != null) {
 			user.setPassword(password);	
 		}
