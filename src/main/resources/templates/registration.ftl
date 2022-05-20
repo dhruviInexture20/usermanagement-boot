@@ -146,7 +146,7 @@
 					</div>
 				</div>
 
-				<div class="col-md-12">
+				<div class="col-md-6">
 					<!-- gender -->
 					<div class="gender-input col-md-12">
 						<label>Select your gender</label>
@@ -169,6 +169,36 @@
 								   name="gender"
 								   <#if user?? & user.gender == "female">checked = "checked"</#if> >
 								   Female
+							</label>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-6">
+					<!-- gender -->
+					<div class="gender-input col-md-12">
+						<label>Select your role</label>
+						<div id="gender-error"></div>
+						<div class="radio">
+							<label>
+							<input type="radio" 
+								   id="user" 
+								   value="user"
+								   name="role"
+								   <#if user?? & user.role == "user">checked = "checked"</#if>
+								   <#if user?? & user.role?? > disabled </#if> >
+								   User
+							</label>
+						</div>
+						<div class="radio">
+							<label>
+							<input type="radio" 
+								   id="admin" 
+								   value="admin"
+								   name="role"
+								   <#if user?? & user.role == "admin">checked = "checked"</#if>
+								   <#if user?? & user.role?? > disabled </#if> >
+								   Admin
 							</label>
 						</div>
 					</div>

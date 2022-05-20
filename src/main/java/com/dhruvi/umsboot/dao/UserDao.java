@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.dhruvi.umsboot.bean.User;
 
-
 public interface UserDao extends JpaRepository<User, Integer> {
 		
 	List<User> findDistinctByEmail(String email);

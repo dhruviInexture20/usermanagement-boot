@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -42,17 +43,19 @@ public class User implements Serializable {
 	@Expose
 	private String lastname;
 
+	
 	@NotBlank(message = "Email cannot be empty<br>")
 	@Email(message = "Please enter a valid email<br>")
 	@Expose
+	@Column(unique = true)
 	private String email;
 	
 	@NotBlank(message = "Phone number cannot be empty<br>")
 	@Expose
 	private String phone;
 	
-
-	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Password must contain one capital letter,one numerical and one special character<br>")
+	
+//	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Password must contain one capital letter,one numerical and one special character<br>")
 	@Expose
 	private String password;
 	
@@ -68,9 +71,9 @@ public class User implements Serializable {
 	
 	@Expose
 	private String role = "user";
+	
 	@Expose
 	private String otp;
-	
 	
 	@Lob
 	private String profilepic;

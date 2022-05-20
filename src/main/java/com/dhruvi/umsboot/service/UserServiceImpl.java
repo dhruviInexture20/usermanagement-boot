@@ -8,6 +8,7 @@ import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dhruvi.umsboot.bean.EmailMessageBean;
 import com.dhruvi.umsboot.bean.User;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserDao dao;
 
+
 	@Override
 	public int create(User user) throws Exception {
 		
@@ -30,9 +32,9 @@ public class UserServiceImpl implements UserService {
 		String password = user.getPassword();
 	
 		user.setPassword(ps.encrypt(password)); // encrypt
+		User savedUser = dao.save(user);
 		
-		
-		return dao.save(user).getUserid();
+		return savedUser.getUserid();
 	}
 
 	@Override
@@ -65,17 +67,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<User> getUserList() {
-		// TODO Auto-generated method stub
 		return dao.findByRole("user");
 		
-//		return null;
 	}
 
 	@Override
 	public void deleteUser(int userid) {
-
-//		Optional<User> user = dao.findById(userid);
-//		dao.delete(user);
 		dao.deleteById(userid);
 
 	}
