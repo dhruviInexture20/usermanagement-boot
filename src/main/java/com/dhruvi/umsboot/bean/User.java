@@ -55,7 +55,7 @@ public class User implements Serializable {
 	private String phone;
 	
 	
-//	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Password must contain one capital letter,one numerical and one special character<br>")
+	@NotBlank(message = "Password cannot be empty<br>")
 	@Expose
 	private String password;
 	
