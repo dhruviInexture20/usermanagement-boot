@@ -182,6 +182,7 @@ public class CustomController {
 	@ResponseBody
 	@RequestMapping(path = "/getAllUsers", produces = "application/json")
 	public JsonObject getAllUsers() {
+		
 		List<User> users = service.getUserList();
 
 		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();

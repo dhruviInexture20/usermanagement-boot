@@ -8,7 +8,6 @@ import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.dhruvi.umsboot.bean.EmailMessageBean;
 import com.dhruvi.umsboot.bean.User;
@@ -55,12 +54,9 @@ public class UserServiceImpl implements UserService {
 		List<User> users = dao.findByEmailAndPassword(email, pass);
 		if(users.size() > 0) {
 			user = users.get(0);
+			user.setPassword(password);
 			
 		}
-		if(user != null) {
-			user.setPassword(password);	
-		}
-		
 		return user;
 
 	}
@@ -91,7 +87,7 @@ public class UserServiceImpl implements UserService {
 	public String authenticateUserForForgetPass(String email, String s_que, String s_ans) {
 
 		List<User> users = dao.findDistinctByEmail(email);
-//		User user = users.get(0);
+
 		String msg;
 		if (users.size() == 0) {
 			msg = "Email is not registered";
@@ -99,7 +95,7 @@ public class UserServiceImpl implements UserService {
 			User user = users.get(0);
 			if (user.getSecurity_answer().equals(s_ans) && user.getSecurity_question().equals(s_que)) {
 			msg = null;
-		} else {
+			} else {
 			msg = "Wrong security question or answer";
 		}
 		}
@@ -120,19 +116,16 @@ public class UserServiceImpl implements UserService {
 
 		EmailUtility emailUtility = new EmailUtility();
 		emailUtility.sendMail(emailbean);
-		saveOTP(email, otp);
-
+		
 		return otp;
 	}
 
 	public void saveOTP(String email, String otp) {
-		// TODO Auto-generated method stub
 		
 		List<User> users =  dao.findDistinctByEmail(email);
 		User user = users.get(0);
 		
-//		user.setOtp(otp);
-//		dao.update(user);
+		user.setOtp(otp);
 		
 		dao.save(user);
 	}
@@ -165,11 +158,11 @@ public class UserServiceImpl implements UserService {
 		
 		PasswordSecurity ps = new PasswordSecurity();
 		password = ps.encrypt(password);
-//		
+		
 		List<User> users = dao.findDistinctByEmail(email);
 		User user = users.get(0);
 		user.setPassword(password);
-//		
+		
 		dao.save(user);
 	}
 

@@ -1,6 +1,4 @@
 
-<#import "/spring.ftl" as spring />
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,11 +27,11 @@
                     <div class="col-md-6">
                         <div class="profile-head">
                                     <h4>
-                                        ${ user.firstname } ${ user.lastname }
+                                       <#if user?? && user.firstname??>${ user.firstname }</#if> <#if user?? && user.lastname??>${ user.lastname }</#if>
                                         
                                     </h4>
                                     <h6>
-                                        ${ user.designation }
+                                       <#if user?? && user.designation??>${ user.designation }</#if>
                                         
                                     </h6>
                                     
@@ -54,7 +52,7 @@
                     <div class="col-md-4 text-center">
                     <div class="row">
                     	<form action="editUserController" method="post">
-                        	<input type="hidden" value="${user.userid}" id="hidden_userid" name="userid">
+                        	<input type="hidden" value="<#if user?? && user.userid??>${user.userid}</#if>" id="hidden_userid" name="userid">
             				<input type="submit" class="btn btn-primary" value="Edit Profile" id="submit">
                         
                         </form>
@@ -70,7 +68,7 @@
                                                 <label>User Id</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>${ user.userid } </p>
+                                                <p><#if user?? && user.userid??>${user.userid}</#if></p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -78,7 +76,7 @@
                                                 <label>Name</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p> ${ user.firstname } ${ user.lastname}</p>
+                                                <p><#if user?? && user.firstname??>${ user.firstname }</#if> <#if user?? && user.lastname??>${ user.lastname }</#if></p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -86,7 +84,7 @@
                                                 <label>Email</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>${ user.email }</p>
+                                                <p><#if user?? && user.email??>${ user.email }</#if></p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -94,7 +92,7 @@
                                                 <label>Phone</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>${ user.phone }</p>
+                                                <p><#if user?? && user.phone??>${ user.phone }</#if></p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -102,7 +100,7 @@
                                                 <label>Designation</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>${ user.designation }</p>
+                                                <p><#if user?? && user.designation??>${ user.designation }</#if></p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -110,7 +108,7 @@
                                                 <label>Gender</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>${ user.gender }</p>
+                                                <p><#if user?? && user.gender??>${ user.gender }</#if></p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -118,7 +116,7 @@
                                                 <label>Date of Birth</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>${ user.birthdate }</p>
+                                                <p><#if user?? && user.birthdate??>${ user.birthdate }</#if></p>
                                             </div>
                                         </div>
                             </div>
