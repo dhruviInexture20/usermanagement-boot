@@ -66,9 +66,10 @@ public class CustomController {
 	@RequestMapping("/adminDashboard")
 	public String goToDashboard(HttpSession session) {
 
+
 		String role = (String) session.getAttribute(ROLE);
 
-		if (role != null && role.equals(USER)) {
+		if (role.equals(USER)) {
 			return PROFILE;
 		}
 
@@ -78,9 +79,10 @@ public class CustomController {
 	@RequestMapping("/profile")
 	public String goToProfile(HttpSession session) {
 
+		logger.info("in profile url");
 		String role = (String) session.getAttribute(ROLE);
 
-		if (role != null && role.equals(ADMIN)) {
+		if (role.equals(ADMIN)) {
 			return ADMINDASHBOARD;
 		}
 
@@ -150,6 +152,9 @@ public class CustomController {
 	@RequestMapping("/process_login")
 	public String checkLogin(@RequestParam(EMAIL) String email, @RequestParam(PASSWORD) String password,
 			HttpServletRequest request, Model model) {
+		
+		logger.info("--- in process- login ---");
+		
 		User user = null;
 		try {
 			user = service.getUser(email, password);
@@ -157,6 +162,7 @@ public class CustomController {
 			logger.error(e);
 		}
 
+		logger.info(user);
 		if (user == null) {
 
 			model.addAttribute(ERROR_MSG, "Wrong Email or Password");

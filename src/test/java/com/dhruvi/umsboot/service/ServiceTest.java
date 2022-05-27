@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -29,9 +31,6 @@ import static org.mockito.Mockito.atLeast;
 
 import com.dhruvi.umsboot.bean.EmailMessageBean;
 
-//import static org.mockito.BDDMockito.given;
-//import static org.mockito.BDDMockito.willDoNothing;
-
 import com.dhruvi.umsboot.bean.User;
 import com.dhruvi.umsboot.dao.UserDao;
 import com.dhruvi.umsboot.utiity.EmailUtility;
@@ -43,7 +42,7 @@ import com.dhruvi.umsboot.utiity.PasswordSecurity;
 public class ServiceTest {
 	
 	@InjectMocks
-	private UserService service;
+	private UserService service;	
 	
 	@Mock
 	private UserDao dao;
@@ -339,6 +338,7 @@ public class ServiceTest {
 		assertFalse(service.verifyOtp("test@gmail.com", "121212"));
 		
 		verify(dao,atLeast(1)).findDistinctByEmail(anyString());
+		
 		
 	}
 	

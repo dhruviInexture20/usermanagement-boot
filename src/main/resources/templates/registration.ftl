@@ -36,7 +36,7 @@
 				<div class="col-md-12">
 					
 					<!-- userid -->
-					<input type="hidden" name="userid" id="userid" value="<#if user?? >${user.userid}<#else>0</#if>">
+					<input type="hidden" name="userid" id="userid" value="<#if user?? && user.userid??>${user.userid}<#else>0</#if>">
 				
 				
 					<!-- first Name -->
@@ -48,7 +48,7 @@
 							   name="firstname"
 							   placeholder="First Name" 
 							   required 
-							   value= "<#if user?? >${user.firstname}</#if>" > 
+							   value= "<#if user?? && user.firstname??>${user.firstname}</#if>" > 
 					</div>
 
 					<!-- Last Name -->
@@ -60,7 +60,7 @@
 							   name="lastname"
 							   placeholder="Last Name" 
 							   required
-							   value ="<#if user?? >${user.lastname}</#if>" >	
+							   value ="<#if user?? && user.lastname??>${user.lastname}</#if>" >	
 					</div>
 				</div>
 
@@ -74,7 +74,7 @@
 							   name="email" 
 							   placeholder="Email" 
 							   required 
-							   value = "<#if user?? >${user.email}</#if>" 
+							   value = "<#if user?? && user.email??>${user.email}</#if>" 
 							   <#if role??>disabled</#if> >
 					</div>
 
@@ -88,7 +88,7 @@
 							   placeholder="phone number" 
 							   pattern="[0-9]{10}" 
 							   required
-							   value = "<#if user?? >${user.phone}</#if>" >
+							   value = "<#if user?? && user.phone??>${user.phone}</#if>" >
 					</div>
 				</div>
 
@@ -103,7 +103,7 @@
 							   name="password"
 							   placeholder="Password" 
 							   required
-							   value = "<#if user?? >${user.password}</#if>" >
+							   value = "<#if user?? && user.password??>${user.password}</#if>" >
 							
 					</div>
 
@@ -116,7 +116,7 @@
 							   name="confirm_password" 
 							   placeholder="Confirm Password" 
 							   required
-							   value = "<#if user?? >${user.password}</#if>" >
+							   value = "<#if user?? && user.password??>${user.password}</#if>" >
 							
 					</div>
 				</div>
@@ -127,11 +127,11 @@
 						<label for="role_title"> User Designation </label> 
 						<select class="form-control" name="designation" required>
 							<option value="">Select designation</option>
-							<option value="intern" <#if user?? & user.designation == "intern" > selected </#if> >Intern</option>
-							<option value="jrDeveloper" <#if user?? & user.designation == "jrDeveloper" > selected </#if> >Junior Developer</option>
-							<option value="srDeveloper" <#if user?? & user.designation == "srDeveloper" > selected </#if> >Senior Developer</option>
-							<option value="team-lead" <#if user?? & user.designation == "team-lead" > selected </#if> >Team Lead</option>
-							<option value="project-manager" <#if user?? & user.designation == "project-manager" > selected </#if> >Project Manager</option>
+							<option value="intern" <#if user?? & user.designation?? & user.designation == "intern" > selected </#if> >Intern</option>
+							<option value="jrDeveloper" <#if user?? & user.designation?? & user.designation == "jrDeveloper" > selected </#if> >Junior Developer</option>
+							<option value="srDeveloper" <#if user?? & user.designation?? & user.designation == "srDeveloper" > selected </#if> >Senior Developer</option>
+							<option value="team-lead" <#if user?? & user.designation?? & user.designation == "team-lead" > selected </#if> >Team Lead</option>
+							<option value="project-manager" <#if user?? & user.designation?? & user.designation == "project-manager" > selected </#if> >Project Manager</option>
 						</select>
 					</div>
 					
@@ -142,7 +142,7 @@
 							   name="birthdate" 
 							   class="form-control" 
 							   required 
-							   value = "<#if user?? >${user.birthdate}</#if>" >
+							   value = "<#if user?? && user.birthdate??>${user.birthdate}</#if>" >
 					</div>
 				</div>
 
@@ -157,7 +157,7 @@
 								   id="male" 
 								   value="male"
 								   name="gender"
-								   <#if user?? & user.gender == "male">checked = "checked"</#if> >
+								   <#if user?? & user.gender?? & user.gender == "male">checked = "checked"</#if> >
 								   Male
 							</label>
 						</div>
@@ -167,7 +167,7 @@
 								   id="female" 
 								   value="female"
 								   name="gender"
-								   <#if user?? & user.gender == "female">checked = "checked"</#if> >
+								   <#if user?? & user.gender?? & user.gender == "female">checked = "checked"</#if> >
 								   Female
 							</label>
 						</div>
@@ -185,7 +185,7 @@
 								   id="user" 
 								   value="user"
 								   name="role"
-								   <#if user?? & user.role == "user">checked = "checked"</#if>
+								   <#if user?? & user.role?? & user.role == "user">checked = "checked"</#if>
 								   <#if user?? & user.role?? > disabled </#if> >
 								   User
 							</label>
@@ -228,9 +228,9 @@
 					<label for="role_title">Security Question : </label>
 						<select class="form-control" name="security_question">
 							<option value="">Select Security Question</option>
-							<option value="book" <#if user?? & user.security_question == "book" > selected </#if> >What is your favourite book name ?</option>
-							<option value="nick_name" <#if user?? & user.security_question == "nick_name" > selected </#if> >What is your nick name ?</option>
-							<option value="game" <#if user?? & user.security_question == "game" > selected </#if> >What is the name of your favouroite game ?</option>
+							<option value="book" <#if user?? & user.security_question?? & user.security_question == "book" > selected </#if> >What is your favourite book name ?</option>
+							<option value="nick_name" <#if user?? & user.security_question?? & user.security_question == "nick_name" > selected </#if> >What is your nick name ?</option>
+							<option value="game" <#if user?? & user.security_question?? & user.security_question == "game" > selected </#if> >What is the name of your favouroite game ?</option>
 						</select>
 					</div>
 					
@@ -239,7 +239,7 @@
 						<input class="form-control" 
 							   type="text" 
 							   name="security_answer" 
-							   value= "<#if user?? >${user.security_answer}</#if>" 
+							   value= "<#if user?? && user.security_answer??>${user.security_answer}</#if>" 
 							   placeholder="Enter Answer" 
 							   >
 					</div>
