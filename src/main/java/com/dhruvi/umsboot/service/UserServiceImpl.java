@@ -7,6 +7,7 @@ import java.util.List;
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dhruvi.umsboot.bean.EmailMessageBean;
@@ -27,10 +28,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public int create(User user) throws Exception {
 		
-		PasswordSecurity ps = new PasswordSecurity();
-		String password = user.getPassword();
-	
-		user.setPassword(ps.encrypt(password)); // encrypt
+//		PasswordSecurity ps = new PasswordSecurity();
+//		String password = user.getPassword();
+//	
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//		encoder.encode(user.getPassword());
+		user.setPassword(encoder.encode(user.getPassword())); // encrypt
 		User savedUser = dao.save(user);
 		
 		return savedUser.getUserid();
@@ -49,13 +52,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUser(String email, String password) throws Exception {
 		User user = null;
-		PasswordSecurity ps = new PasswordSecurity();
-		String pass = ps.encrypt(password); // encrypt
-		List<User> users = dao.findByEmailAndPassword(email, pass);
+//		PasswordSecurity ps = new PasswordSecurity();
+//		String pass = ps.encrypt(password); // encrypt
+		
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		
+		List<User> users = dao.findByEmailAndPassword(email, encoder.encode(password));
 		if(users.size() > 0) {
 			user = users.get(0);
 			user.setPassword(password);
-			
 		}
 		return user;
 
@@ -75,11 +80,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserById(String userid) throws Exception {
-		PasswordSecurity ps = new PasswordSecurity();
+//		PasswordSecurity ps = new PasswordSecurity();
 		User user = dao.getById(Integer.parseInt(userid));
 		
-		String password = user.getPassword();
-		user.setPassword(ps.decrypt(password));
+		
+		
+//		String password = user.getPassword();
+//		user.setPassword();
+		
 		return user;
 	}
 
@@ -133,11 +141,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void updateUser(User user) throws Exception {
 		
-		PasswordSecurity ps = new PasswordSecurity();
-		String password = user.getPassword();
+//		PasswordSecurity ps = new PasswordSecurity();
+//		String password = user.getPassword();
 		
-		user.setPassword(ps.encrypt(password)); // encrypt
-	
+//		user.setPassword(ps.encrypt(password)); // encrypt
+		
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		user.setPassword(encoder.encode(user.getPassword()));
+		
 		dao.save(user);
 	}
 
@@ -156,11 +167,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void updatePssword(String email, String password) throws Exception {
 		
-		PasswordSecurity ps = new PasswordSecurity();
-		password = ps.encrypt(password);
+//		PasswordSecurity ps = new PasswordSecurity();
+//		password = ps.encrypt(password);
+		
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		password = encoder.encode(password);
 		
 		List<User> users = dao.findDistinctByEmail(email);
 		User user = users.get(0);
+		
+		
 		user.setPassword(password);
 		
 		dao.save(user);

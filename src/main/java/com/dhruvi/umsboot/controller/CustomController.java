@@ -4,7 +4,6 @@ import java.util.Base64;
 import java.util.List;
 
 import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -12,6 +11,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dhruvi.umsboot.UserPrincipal;
 import com.dhruvi.umsboot.bean.Address;
 import com.dhruvi.umsboot.bean.User;
 import com.dhruvi.umsboot.service.UserService;
@@ -53,10 +54,12 @@ public class CustomController {
 	@Autowired
 	private UserService service;
 
-	@RequestMapping(path = { "/", "/login" })
+	@RequestMapping(path = { "/", "/loginpage" })
 	public String home() {
 		return LOGIN;
 	}
+	
+	
 
 	@RequestMapping("/registration")
 	public String registration() {
@@ -67,11 +70,11 @@ public class CustomController {
 	public String goToDashboard(HttpSession session) {
 
 
-		String role = (String) session.getAttribute(ROLE);
+//		String role = (String) session.getAttribute(ROLE);
 
-		if (role.equals(USER)) {
-			return PROFILE;
-		}
+//		if (role.equals(USER)) {
+//			return PROFILE;
+//		}
 
 		return ADMINDASHBOARD;
 	}
@@ -79,12 +82,12 @@ public class CustomController {
 	@RequestMapping("/profile")
 	public String goToProfile(HttpSession session) {
 
-		logger.info("in profile url");
-		String role = (String) session.getAttribute(ROLE);
-
-		if (role.equals(ADMIN)) {
-			return ADMINDASHBOARD;
-		}
+//		logger.info("in profile url");
+//		String role = (String) session.getAttribute(ROLE);
+//
+//		if (role.equals(ADMIN)) {
+//			return ADMINDASHBOARD;
+//		}
 
 		return PROFILE;
 	}
@@ -143,46 +146,75 @@ public class CustomController {
 	@ResponseBody
 	@RequestMapping("/checkEmailAvailability")
 	public String checkEmail(@RequestParam String email) {
-
 		String isExist = service.userExist(email);
-
 		return isExist;
 	}
 
-	@RequestMapping("/process_login")
-	public String checkLogin(@RequestParam(EMAIL) String email, @RequestParam(PASSWORD) String password,
-			HttpServletRequest request, Model model) {
+//	@RequestMapping("/process_login")
+//	public String checkLogin(@RequestParam(EMAIL) String email, @RequestParam(PASSWORD) String password,
+//			HttpServletRequest request, Model model) {
+//		
+//		logger.info("--- in process- login ---");
+//		
+//		User user = null;
+//		try {
+//			user = service.getUser(email, password);
+//		} catch (Exception e) {
+//			logger.error(e);
+//		}
+//
+//		logger.info(user);
+//		if (user == null) {
+//
+//			model.addAttribute(ERROR_MSG, "Wrong Email or Password");
+//			model.addAttribute(EMAIL, email);
+//			return LOGIN;
+//
+//		} else if (user.getRole().equals(USER)) {
+//			logger.info("user login");
+//			HttpSession session = request.getSession();
+//			session.setAttribute(ROLE, USER);
+//			session.setAttribute(USER, user);
+//
+//			return "redirect:profile";
+//		} else {
+//			logger.info("admin login");
+//			HttpSession session = request.getSession();
+//			session.setAttribute(ROLE, ADMIN);
+//
+//			return "redirect:adminDashboard";
+//		}
+//	}
+	
+	@RequestMapping("/defaultLoginPath")
+	public String defaultLoginUrl(HttpSession session, Model model) {
 		
-		logger.info("--- in process- login ---");
+		UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal() ;
 		
-		User user = null;
-		try {
-			user = service.getUser(email, password);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-
+		User user = principal.getUser();
+		
+		session.setAttribute(USER, user);
+		session.setAttribute(ROLE, user.getRole());
+		
+		
 		logger.info(user);
-		if (user == null) {
-
+		logger.info(user.getEmail());
+		logger.info(user.getPassword());
+		
+		if(user.getEmail() == null) {
+			
 			model.addAttribute(ERROR_MSG, "Wrong Email or Password");
-			model.addAttribute(EMAIL, email);
+			model.addAttribute(EMAIL, user.getEmail());
 			return LOGIN;
-
-		} else if (user.getRole().equals(USER)) {
-			logger.info("user login");
-			HttpSession session = request.getSession();
-			session.setAttribute(ROLE, USER);
-			session.setAttribute(USER, user);
-
+		}
+		
+		if(user.getRole().equals("user")) {
 			return "redirect:profile";
-		} else {
-			logger.info("admin login");
-			HttpSession session = request.getSession();
-			session.setAttribute(ROLE, ADMIN);
-
+		}
+		else {
 			return "redirect:adminDashboard";
 		}
+		
 	}
 
 	@ResponseBody

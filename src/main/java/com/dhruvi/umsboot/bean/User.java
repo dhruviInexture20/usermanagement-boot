@@ -23,7 +23,7 @@ import com.google.gson.annotations.Expose;
 
 
 @Entity
-@Table(name = "user")
+@Table(name = "user100")
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;

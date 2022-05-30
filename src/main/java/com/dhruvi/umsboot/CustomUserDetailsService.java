@@ -1,5 +1,7 @@
 package com.dhruvi.umsboot;
 
+import java.util.List;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +27,15 @@ public class CustomUserDetailsService implements UserDetailsService{
 		
 //		User user =  dao.g();
 		
-		User user = dao.findDistinctByEmail(email).get(0);
-//		System.out.println("---------------------------------");
-//		System.out.println(user);
-//		logger.info("----------------");
-//		logger.info(user);
+		System.out.println("email = " + email);
+		List<User> users = dao.findDistinctByEmail(email);
+		
+		User user = users.size()>0 ? users.get(0) : null;
+		
+		System.out.println("---------------------------------");
+		System.out.println(user);
+		logger.info("----------------");
+		logger.info(user);
 		if(user == null) {
 			throw new UsernameNotFoundException("User Not Available");
 		}

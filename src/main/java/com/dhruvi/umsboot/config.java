@@ -1,12 +1,5 @@
 package com.dhruvi.umsboot;
 
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.dhruvi.umsboot.filter.CustomFilter;
-import com.dhruvi.umsboot.filter.LoginAuthFilter;
-
 //@Configuration
 public class Config {
 

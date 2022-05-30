@@ -322,7 +322,7 @@
 			<#if role?? >
 			<#else>
 			<div class="col-md-3">
-				<a href="login" class="btn btn-primary my-btn">Goto Login Page</a>
+				<a href="loginpage" class="btn btn-primary my-btn">Goto Login Page</a>
 			</div>
 			</#if>
 			<div class="col-md-3">

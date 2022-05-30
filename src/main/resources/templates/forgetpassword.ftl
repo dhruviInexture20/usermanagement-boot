@@ -55,7 +55,7 @@
                            </form>
                         </div>
                         <div class="links">
-                  <a href="login">Go to Login page</a>
+                  <a href="loginpage">Go to Login page</a>
                </div>	
                      </div>
                   </div>

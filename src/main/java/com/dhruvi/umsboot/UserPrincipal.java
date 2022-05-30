@@ -37,11 +37,18 @@ public class UserPrincipal implements UserDetails {
 
 		logger.info(user);
 		if(user.getRole().equals("admin")) {
-			return Collections.singleton(new SimpleGrantedAuthority("ADMIN"));
+			logger.info("return admin");
+			return Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"));
 		}
+
+		logger.info("return user" + user.getRole());
+		return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+//		return Collections.singleton(new SimpleGrantedAuthority("ROLE_"+user.getRole()));
 		
-		return Collections.singleton(new SimpleGrantedAuthority("USER"));
-		
+	}
+	
+	public User getUser() {
+		return this.user;
 	}
 
 	@Override
